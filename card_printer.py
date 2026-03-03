@@ -6,6 +6,7 @@ Integrates with Adobe Photoshop CS5 and uses Adobe color profiles
 
 import json
 import os
+from functools import lru_cache
 from PIL import Image, ImageDraw, ImageFont
 import win32print
 import win32ui
@@ -17,6 +18,20 @@ def load_config():
     """Load configuration from config.json"""
     with open('config.json', 'r') as f:
         return json.load(f)
+
+
+@lru_cache(maxsize=None)
+def _load_fonts():
+    """Load fonts once and cache the result to avoid repeated disk reads."""
+    try:
+        font_large = ImageFont.truetype("arial.ttf", 48)
+        font_medium = ImageFont.truetype("arial.ttf", 32)
+        font_small = ImageFont.truetype("arial.ttf", 24)
+    except (OSError, IOError):
+        font_large = ImageFont.load_default()
+        font_medium = ImageFont.load_default()
+        font_small = ImageFont.load_default()
+    return font_large, font_medium, font_small
 
 
 def create_card_image(card_data, config):
@@ -42,15 +57,8 @@ def create_card_image(card_data, config):
     card = Image.new('RGB', (card_width_px, card_height_px), 'white')
     draw = ImageDraw.Draw(card)
     
-    # Load fonts
-    try:
-        font_large = ImageFont.truetype("arial.ttf", 48)
-        font_medium = ImageFont.truetype("arial.ttf", 32)
-        font_small = ImageFont.truetype("arial.ttf", 24)
-    except:
-        font_large = ImageFont.load_default()
-        font_medium = ImageFont.load_default()
-        font_small = ImageFont.load_default()
+    # Load fonts (cached after first call)
+    font_large, font_medium, font_small = _load_fonts()
     
     # Draw card border
     border_color = (0, 102, 204)  # Adobe blue

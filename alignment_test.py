@@ -102,9 +102,9 @@ def create_dual_card_test_pattern(config):
     
     full_image = Image.new('RGB', (total_width, total_height), 'white')
     
-    # Create alignment test for each card
+    # Create alignment test for each card (card2 is identical — reuse a copy)
     card1_img = create_alignment_test_image(card_width_px, card_height_px)
-    card2_img = create_alignment_test_image(card_width_px, card_height_px)
+    card2_img = card1_img.copy()
     
     # Paste cards onto full image
     full_image.paste(card1_img, (0, 0))
