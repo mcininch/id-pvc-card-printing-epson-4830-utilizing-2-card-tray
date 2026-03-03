@@ -43,13 +43,13 @@ def read_card_data(excel_file=None, sheet_name=None):
         
         print(f"Found columns: {headers}")
         
-        # Read data rows
+        # Read data rows using iter_rows for efficient batch retrieval.
+        # iter_rows with max_col pads each row tuple to exactly len(headers) items,
+        # so col_idx (0-based) is always a valid index.
         card_data = []
-        for row_idx in range(2, sheet.max_row + 1):
-            row_data = {}
-            for col_idx, header in enumerate(headers, start=1):
-                cell_value = sheet.cell(row=row_idx, column=col_idx).value
-                row_data[header] = cell_value if cell_value is not None else ""
+        for row in sheet.iter_rows(min_row=2, max_col=len(headers), values_only=True):
+            row_data = {header: (row[col_idx] if row[col_idx] is not None else "")
+                        for col_idx, header in enumerate(headers)}
             
             # Only add rows that have at least a name
             if row_data.get('Name'):
@@ -99,11 +99,9 @@ def create_sample_excel():
         max_length = 0
         column_letter = column[0].column_letter
         for cell in column:
-            try:
-                if len(str(cell.value)) > max_length:
-                    max_length = len(cell.value)
-            except:
-                pass
+            cell_len = len(str(cell.value)) if cell.value is not None else 0
+            if cell_len > max_length:
+                max_length = cell_len
         adjusted_width = min(max_length + 2, 50)
         sheet.column_dimensions[column_letter].width = adjusted_width
     

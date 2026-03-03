@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.pyo
+card_preview_*.png
+alignment_test_preview.png
+card_data.xlsx
