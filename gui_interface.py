@@ -262,11 +262,7 @@ class PhotoshopBridgeInterface(tk.Tk):
         if filename:
             self.log(f"Loading data from: {filename}")
             try:
-                # Temporarily update config with selected file
-                original_file = self.config['excel']['data_file']
-                self.config['excel']['data_file'] = filename
-                
-                self.card_data = read_card_data()
+                self.card_data = read_card_data(excel_file=filename)
                 
                 if self.card_data:
                     self.card_listbox.delete(0, tk.END)
