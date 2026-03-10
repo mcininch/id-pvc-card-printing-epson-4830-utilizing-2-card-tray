@@ -1,1 +1,36 @@
-{\n  "printer": {\n    "name": "EPSON Stylus Photo R4830",\n    "paper_size": "CR80",\n    "card_width_inches": 3.375,\n    "card_height_inches": 2.125\n  },\n  "tray": {\n    "type": "2-card-plastic-tray",\n    "card1_offset_x_mm": 0,\n    "card1_offset_y_mm": 0,\n    "card2_offset_x_mm": 90,\n    "card2_offset_y_mm": 0,\n    "spacing_between_cards_mm": 5\n  },\n  "alignment": {\n    "margin_left_mm": 0,\n    "margin_top_mm": 0,\n    "fine_tune_x_mm": 0,\n    "fine_tune_y_mm": 0\n  },\n  "photoshop": {\n    "color_profile": "Adobe RGB (1998)",\n    "resolution_dpi": 300,\n    "print_quality": "best"\n  },\n  "excel": {\n    "data_file": "card_data.xlsx",\n    "sheet_name": "Cards"\n  }\n}
+{
+  "subscription": {
+    "active": true,
+    "expiry_date": "2026-12-31",
+    "license_key": ""
+  },
+  "printer": {
+    "name": "EPSON Stylus Photo R4830",
+    "paper_size": "CR80",
+    "card_width_inches": 3.375,
+    "card_height_inches": 2.125
+  },
+  "tray": {
+    "type": "2-card-plastic-tray",
+    "card1_offset_x_mm": 0,
+    "card1_offset_y_mm": 0,
+    "card2_offset_x_mm": 90,
+    "card2_offset_y_mm": 0,
+    "spacing_between_cards_mm": 5
+  },
+  "alignment": {
+    "margin_left_mm": 0,
+    "margin_top_mm": 0,
+    "fine_tune_x_mm": 0,
+    "fine_tune_y_mm": 0
+  },
+  "photoshop": {
+    "color_profile": "Adobe RGB (1998)",
+    "resolution_dpi": 300,
+    "print_quality": "best"
+  },
+  "excel": {
+    "data_file": "card_data.xlsx",
+    "sheet_name": "Cards"
+  }
+}

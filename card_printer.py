@@ -11,6 +11,7 @@ import win32print
 import win32ui
 from PIL import ImageWin
 from excel_reader import read_card_data
+from subscription_manager import check_subscription_or_raise, get_subscription_status
 
 
 def load_config():
@@ -159,6 +160,8 @@ def print_cards(card_list, config):
         card_list: List of card data dictionaries
         config: Configuration dictionary
     """
+    check_subscription_or_raise(config)
+
     printer_name = config['printer']['name']
     
     print(f"\nPrinting {len(card_list)} cards to {printer_name}")
@@ -213,6 +216,13 @@ if __name__ == "__main__":
     
     # Load configuration
     config = load_config();
+    
+    # Check subscription status
+    sub_status = get_subscription_status(config)
+    print(f"\nSubscription: {sub_status['message']}")
+    if not sub_status['active']:
+        print("\nPrinting is disabled. Please renew your subscription.")
+        exit(1)
     
     # Read card data from Excel
     card_data = read_card_data();

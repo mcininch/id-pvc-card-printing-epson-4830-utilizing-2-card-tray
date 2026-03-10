@@ -12,6 +12,7 @@ import threading
 from card_printer import create_card_image, create_dual_card_layout, print_cards
 from excel_reader import read_card_data, create_sample_excel
 from alignment_test import print_alignment_test
+from subscription_manager import get_subscription_status
 
 
 class PhotoshopBridgeInterface(tk.Tk):
@@ -26,10 +27,15 @@ class PhotoshopBridgeInterface(tk.Tk):
         self.config = self.load_config()
         self.card_data = []
         self.current_preview = None
+        self.subscription_status = get_subscription_status(self.config)
         
         # Create UI
         self.create_menu()
         self.create_main_interface()
+        
+        # Show subscription warning after UI is built
+        if not self.subscription_status['active']:
+            self.after(100, self._show_subscription_expired_warning)
         
     def load_config(self):
         """Load configuration from config.json"""
@@ -114,6 +120,34 @@ class PhotoshopBridgeInterface(tk.Tk):
             fg='#cccccc'
         ).pack(anchor=tk.W, padx=5, pady=2)
         
+        # Subscription status
+        sub_frame = tk.LabelFrame(
+            left_panel,
+            text="Subscription",
+            bg='#3c3c3c',
+            fg='white',
+            font=("Arial", 10, "bold")
+        )
+        sub_frame.pack(fill=tk.X, padx=10, pady=10)
+        
+        if self.subscription_status['active']:
+            sub_color = '#ffcc00' if (
+                self.subscription_status['days_remaining'] is not None
+                and self.subscription_status['days_remaining'] <= 30
+            ) else '#00ff00'
+        else:
+            sub_color = '#ff4444'
+        
+        self.sub_status_label = tk.Label(
+            sub_frame,
+            text=self.subscription_status['message'],
+            bg='#3c3c3c',
+            fg=sub_color,
+            wraplength=250,
+            justify=tk.LEFT
+        )
+        self.sub_status_label.pack(anchor=tk.W, padx=5, pady=5)
+        
         # Data source
         data_frame = tk.LabelFrame(
             left_panel,
@@ -179,17 +213,20 @@ class PhotoshopBridgeInterface(tk.Tk):
             height=2
         ).pack(fill=tk.X, pady=5)
         
-        tk.Button(
+        print_btn_bg = '#555555' if not self.subscription_status['active'] else '#107c10'
+        self.print_button = tk.Button(
             action_frame,
             text="🖨️ Print All Cards",
             command=self.print_all_cards,
-            bg='#107c10',
+            bg=print_btn_bg,
             fg='white',
             font=("Arial", 10, "bold"),
             relief=tk.FLAT,
             cursor="hand2",
-            height=2
-        ).pack(fill=tk.X, pady=5)
+            height=2,
+            state=tk.NORMAL if self.subscription_status['active'] else tk.DISABLED
+        )
+        self.print_button.pack(fill=tk.X, pady=5)
         
         tk.Button(
             action_frame,
@@ -245,7 +282,17 @@ class PhotoshopBridgeInterface(tk.Tk):
         
         self.log("System initialized. Ready to print.")
         self.log(f"Printer: {self.config.get('printer', {}).get('name', 'Not configured')}")
+        self.log(f"Subscription: {self.subscription_status['message']}")
     
+    def _show_subscription_expired_warning(self):
+        """Show a modal warning when the subscription is not active."""
+        messagebox.showwarning(
+            "Subscription Expired",
+            self.subscription_status['message'] + "\n\n"
+            "Printing has been disabled. Please renew your subscription\n"
+            "and update the expiry_date in config.json to continue."
+        )
+
     def log(self, message):
         """Add message to console"""
         self.console.insert(tk.END, f"> {message}\n")
@@ -344,6 +391,13 @@ class PhotoshopBridgeInterface(tk.Tk):
     
     def print_all_cards(self):
         """Print all loaded cards"""
+        if not self.subscription_status['active']:
+            messagebox.showerror(
+                "Subscription Expired",
+                self.subscription_status['message']
+            )
+            return
+        
         if not self.card_data:
             messagebox.showwarning("No Data", "Please load card data first")
             return
