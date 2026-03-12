@@ -1,6 +1,6 @@
 """
 GUI Interface for ID Card Printer
-Provides visual interface with Photoshop Bridge to Epson 4830
+Provides visual interface with Photoshop Bridge (CS5 or later, including CC/Pro) to Epson 4830
 """
 
 import tkinter as tk

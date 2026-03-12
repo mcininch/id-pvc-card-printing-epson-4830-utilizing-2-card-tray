@@ -1,7 +1,7 @@
 """
 Main Card Printing Script
 Prints PVC ID cards using Epson 4830 with 2-card tray
-Integrates with Adobe Photoshop CS5 and uses Adobe color profiles
+Integrates with Adobe Photoshop (CS5 or later, including CC/Pro) and uses Adobe color profiles
 """
 
 import json
