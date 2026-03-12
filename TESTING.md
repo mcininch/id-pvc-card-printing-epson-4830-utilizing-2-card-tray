@@ -45,9 +45,16 @@ This will:
   "card1_offset_y_mm": 0,    // Adjust up/down for card 1
   "card2_offset_x_mm": 90,   // Adjust left/right for card 2
   "card2_offset_y_mm": 0,    // Adjust up/down for card 2
-  "spacing_between_cards_mm": 5  // Space between the 2 cards
+  "spacing_between_cards_mm": 5,  // Space between the 2 cards
+  "tray_depression_compensation_x_mm": 0,  // X compensation for physical tray depression
+  "tray_depression_compensation_y_mm": 0   // Y compensation for physical tray depression
 }
 ```
+
+The `tray_depression_compensation_x_mm` and `tray_depression_compensation_y_mm` values compensate
+for the physical indentation (depression) in the 2-card plastic tray where the PVC cards sit. If
+your cards consistently print slightly offset in the same direction, adjust these values (positive
+moves right/down, negative moves left/up) before tuning the individual card offsets.
 
 Run `alignment_test.py` again after adjustments.
 

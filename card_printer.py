@@ -128,7 +128,12 @@ def create_dual_card_layout(card1_data, card2_data, config):
     # Get spacing from config
     spacing_mm = config['tray']['spacing_between_cards_mm']
     spacing_px = int((spacing_mm / 25.4) * dpi)
-    
+
+    # Tray depression compensation: accounts for the physical indentation in the
+    # 2-card plastic tray where cards sit, which can shift the effective print area.
+    depression_comp_x_px = int((config['tray'].get('tray_depression_compensation_x_mm', 0) / 25.4) * dpi)
+    depression_comp_y_px = int((config['tray'].get('tray_depression_compensation_y_mm', 0) / 25.4) * dpi)
+
     # Create full print area
     total_width = (card_width_px * 2) + spacing_px
     total_height = card_height_px;
@@ -137,15 +142,15 @@ def create_dual_card_layout(card1_data, card2_data, config):
     
     # Create and place card 1
     card1_img = create_card_image(card1_data, config)
-    offset_x1 = int((config['tray']['card1_offset_x_mm'] / 25.4) * dpi)
-    offset_y1 = int((config['tray']['card1_offset_y_mm'] / 25.4) * dpi)
+    offset_x1 = int((config['tray']['card1_offset_x_mm'] / 25.4) * dpi) + depression_comp_x_px
+    offset_y1 = int((config['tray']['card1_offset_y_mm'] / 25.4) * dpi) + depression_comp_y_px
     print_image.paste(card1_img, (offset_x1, offset_y1))
     
     # Create and place card 2 (if data provided)
     if card2_data:
         card2_img = create_card_image(card2_data, config)
-        offset_x2 = card_width_px + spacing_px + int((config['tray']['card2_offset_x_mm'] / 25.4) * dpi)
-        offset_y2 = int((config['tray']['card2_offset_y_mm'] / 25.4) * dpi)
+        offset_x2 = card_width_px + spacing_px + int((config['tray']['card2_offset_x_mm'] / 25.4) * dpi) + depression_comp_x_px
+        offset_y2 = int((config['tray']['card2_offset_y_mm'] / 25.4) * dpi) + depression_comp_y_px
         print_image.paste(card2_img, (offset_x2, offset_y2))
     
     return print_image

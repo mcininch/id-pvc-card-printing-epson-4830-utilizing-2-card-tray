@@ -95,7 +95,12 @@ def create_dual_card_test_pattern(config):
     # Get tray spacing
     spacing_mm = config['tray']['spacing_between_cards_mm']
     spacing_px = int((spacing_mm / 25.4) * dpi)  # Convert mm to pixels
-    
+
+    # Tray depression compensation: accounts for the physical indentation in the
+    # 2-card plastic tray where cards sit, which can shift the effective print area.
+    depression_comp_x_px = int((config['tray'].get('tray_depression_compensation_x_mm', 0) / 25.4) * dpi)
+    depression_comp_y_px = int((config['tray'].get('tray_depression_compensation_y_mm', 0) / 25.4) * dpi)
+
     # Create full image for 2 cards side by side
     total_width = (card_width_px * 2) + spacing_px
     total_height = card_height_px
@@ -106,9 +111,9 @@ def create_dual_card_test_pattern(config):
     card1_img = create_alignment_test_image(card_width_px, card_height_px)
     card2_img = create_alignment_test_image(card_width_px, card_height_px)
     
-    # Paste cards onto full image
-    full_image.paste(card1_img, (0, 0))
-    full_image.paste(card2_img, (card_width_px + spacing_px, 0))
+    # Paste cards onto full image, applying depression compensation
+    full_image.paste(card1_img, (depression_comp_x_px, depression_comp_y_px))
+    full_image.paste(card2_img, (card_width_px + spacing_px + depression_comp_x_px, depression_comp_y_px))
     
     return full_image
 
