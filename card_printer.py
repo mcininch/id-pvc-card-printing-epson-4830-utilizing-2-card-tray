@@ -151,13 +151,18 @@ def create_dual_card_layout(card1_data, card2_data, config):
     return print_image
 
 
-def print_cards(card_list, config):
+def print_cards(card_list, config, on_batch_complete=None):
     """
     Print cards to Epson 4830 using 2-card tray
     
     Args:
         card_list: List of card data dictionaries
         config: Configuration dictionary
+        on_batch_complete: Optional callable invoked between batches instead of
+            blocking on input().  Receives the loop index `i` (the starting
+            position of the batch just printed, e.g. 0, 2, 4, …), not a
+            sequential batch number.  When None (default), the user is prompted
+            via input() as before.
     """
     printer_name = config['printer']['name']
     
@@ -203,7 +208,10 @@ def print_cards(card_list, config):
         
         # Prompt for next batch
         if i+2 < len(card_list):
-            input("\nPress Enter when ready to print next batch...")
+            if on_batch_complete is not None:
+                on_batch_complete(i)
+            else:
+                input("\nPress Enter when ready to print next batch...")
 
 
 if __name__ == "__main__":
