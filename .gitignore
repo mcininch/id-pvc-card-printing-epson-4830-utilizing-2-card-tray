@@ -1,0 +1,14 @@
+# Per-installation license state — not committed to source control
+license.json
+
+# Preview images generated during printing
+card_preview_*.png
+alignment_test_preview.png
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/

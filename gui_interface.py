@@ -4,7 +4,7 @@ Provides visual interface with Photoshop Bridge to Epson 4830
 """
 
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox, scrolledtext
+from tkinter import ttk, filedialog, messagebox, scrolledtext, simpledialog
 import json
 import os
 from PIL import Image, ImageTk
@@ -12,6 +12,9 @@ import threading
 from card_printer import create_card_image, create_dual_card_layout, print_cards
 from excel_reader import read_card_data, create_sample_excel
 from alignment_test import print_alignment_test
+from license_manager import is_activated, activate_license
+
+_REGISTER_MENU_PATH = "Help \u2192 Register License"
 
 
 class PhotoshopBridgeInterface(tk.Tk):
@@ -30,6 +33,10 @@ class PhotoshopBridgeInterface(tk.Tk):
         # Create UI
         self.create_menu()
         self.create_main_interface()
+
+        # Only prompt for upgrade if the user has not already activated
+        if not is_activated():
+            self.after(500, self._prompt_upgrade_if_needed)
         
     def load_config(self):
         """Load configuration from config.json"""
@@ -63,6 +70,7 @@ class PhotoshopBridgeInterface(tk.Tk):
         # Help menu
         help_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Help", menu=help_menu)
+        help_menu.add_command(label="Register License", command=self.register_license)
         help_menu.add_command(label="About", command=self.show_about)
     
     def create_main_interface(self):
@@ -428,9 +436,49 @@ class PhotoshopBridgeInterface(tk.Tk):
             bg='#0078d4',
             fg='white'
         ).pack(pady=10)
-    
+
+    def _prompt_upgrade_if_needed(self):
+        """Show the upgrade prompt only once — never again after the user has activated."""
+        if is_activated():
+            return
+        response = messagebox.askyesno(
+            "Upgrade Available",
+            "A premium upgrade is available for additional features.\n\n"
+            f"If you have already purchased an upgrade, click 'No' and use\n"
+            f"{_REGISTER_MENU_PATH} to activate it and dismiss this notice.\n\n"
+            "Would you like to purchase an upgrade now?"
+        )
+        if response:
+            import webbrowser
+            webbrowser.open("https://github.com/mcininch/id-pvc-card-printing-epson-4830-utilizing-2-card-tray")
+
+    def register_license(self):
+        """Allow the user to enter their license key and activate the upgrade they already own."""
+        if is_activated():
+            messagebox.showinfo(
+                "Already Activated",
+                "Your license is already activated.\n"
+                "You will not be asked to upgrade again."
+            )
+            return
+
+        key = simpledialog.askstring(
+            "Register License",
+            "Enter your license key to activate your upgrade:",
+            parent=self
+        )
+        if key is None:
+            return
+        success, message = activate_license(key)
+        if success:
+            messagebox.showinfo("License Activated", message)
+            self.log("License activated. Upgrade prompt will not appear again.")
+        else:
+            messagebox.showerror("Activation Failed", message)
+
     def show_about(self):
         """Show about dialog"""
+        status = "✓ Licensed" if is_activated() else f"Unlicensed ({_REGISTER_MENU_PATH})"
         messagebox.showinfo(
             "About",
             "ID Card Printer\n"
@@ -440,7 +488,8 @@ class PhotoshopBridgeInterface(tk.Tk):
             "- Adobe color profiles\n"
             "- Alignment calibration\n"
             "- Excel integration\n\n"
-            "Version 1.0"
+            f"Version 1.0\n"
+            f"Status: {status}"
         )
 
 
