@@ -101,7 +101,7 @@ def create_sample_excel():
         for cell in column:
             try:
                 if len(str(cell.value)) > max_length:
-                    max_length = len(cell.value)
+                    max_length = len(str(cell.value))
             except:
                 pass
         adjusted_width = min(max_length + 2, 50)
