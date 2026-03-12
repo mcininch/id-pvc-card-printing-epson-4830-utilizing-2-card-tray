@@ -16,7 +16,7 @@ Python-based solution for printing professional ID cards using Adobe Photoshop C
 
 ## Software Requirements
 - Python 3.8+
-- Adobe Photoshop CS5
+- Adobe Photoshop (CS5 or later, including CC/Pro versions)
 - Required Python packages (see requirements.txt)
 
 ## Setup
