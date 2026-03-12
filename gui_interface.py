@@ -262,11 +262,7 @@ class PhotoshopBridgeInterface(tk.Tk):
         if filename:
             self.log(f"Loading data from: {filename}")
             try:
-                # Temporarily update config with selected file
-                original_file = self.config['excel']['data_file']
-                self.config['excel']['data_file'] = filename
-                
-                self.card_data = read_card_data()
+                self.card_data = read_card_data(excel_file=filename)
                 
                 if self.card_data:
                     self.card_listbox.delete(0, tk.END)
@@ -364,8 +360,17 @@ class PhotoshopBridgeInterface(tk.Tk):
     
     def print_worker(self):
         """Worker thread for printing"""
+        def next_batch_prompt(batch_num):
+            """Show a dialog between batches so the user can reload the tray"""
+            messagebox.showinfo(
+                "Reload Card Tray",
+                f"Batch {batch_num} printed successfully.\n\n"
+                "Please reload the 2-card tray with new blank cards,\n"
+                "then click OK to continue."
+            )
+
         try:
-            print_cards(self.card_data, self.config)
+            print_cards(self.card_data, self.config, batch_callback=next_batch_prompt)
             self.log("Print job completed successfully!")
             messagebox.showinfo("Success", "Cards printed successfully!")
         except Exception as e:
