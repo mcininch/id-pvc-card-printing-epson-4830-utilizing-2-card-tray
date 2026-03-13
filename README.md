@@ -1,13 +1,17 @@
-# ID PVC Card Printing - Epson 4830 with 2-Card Tray
+# ID PVC Card Printing - Epson 4830 with 2-Card Tray — **Pro Edition**
 
 Python-based solution for printing professional ID cards using Adobe Photoshop CS5, Epson 4830 printer, and 2-card plastic tray.
 
-## Features
+> ✅ **You already have the Pro Edition (v2.0).** No upgrade needed.
+
+## Features (Pro Edition)
 - Read card data from Excel files using EPPlus/openpyxl
 - Proper alignment for 2-card tray (Amazon)
 - Adobe color profile support for accurate colors
 - Automated batch printing
 - Alignment guides and testing
+- GUI preview with Photoshop Bridge
+- Unlimited card printing
 
 ## Hardware Requirements
 - Epson 4830 Printer (brand new)
