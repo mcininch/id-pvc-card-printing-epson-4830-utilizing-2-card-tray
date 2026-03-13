@@ -15,15 +15,22 @@ from alignment_test import print_alignment_test
 
 
 class PhotoshopBridgeInterface(tk.Tk):
+
+    DEFAULT_EDITION = "Pro"
+    DEFAULT_VERSION = "2.0"
+
     def __init__(self):
         super().__init__()
         
-        self.title("ID Card Printer - Photoshop Bridge to Epson 4830")
         self.geometry("900x700")
         self.configure(bg='#2b2b2b')
         
         # Load configuration
         self.config = self.load_config()
+
+        edition = self.config.get('app', {}).get('edition', self.DEFAULT_EDITION)
+        version = self.config.get('app', {}).get('version', self.DEFAULT_VERSION)
+        self.title(f"ID Card Printer {edition} v{version} - Photoshop Bridge to Epson 4830")
         self.card_data = []
         self.current_preview = None
         
@@ -73,7 +80,7 @@ class PhotoshopBridgeInterface(tk.Tk):
         
         title_label = tk.Label(
             title_frame, 
-            text="Photoshop Bridge → Epson 4830 (2-Card Tray)",
+            text="Photoshop Bridge → Epson 4830 (2-Card Tray) ★ Pro Edition",
             font=("Arial", 16, "bold"),
             bg='#1e1e1e',
             fg='#00a4ef'
@@ -431,16 +438,21 @@ class PhotoshopBridgeInterface(tk.Tk):
     
     def show_about(self):
         """Show about dialog"""
+        edition = self.config.get('app', {}).get('edition', self.DEFAULT_EDITION)
+        version = self.config.get('app', {}).get('version', self.DEFAULT_VERSION)
         messagebox.showinfo(
             "About",
-            "ID Card Printer\n"
+            f"ID Card Printer {edition} Edition\n"
+            f"Version {version}\n"
             "Photoshop Bridge to Epson 4830\n\n"
-            "Features:\n"
+            "Pro Features:\n"
             "- 2-card tray support\n"
             "- Adobe color profiles\n"
             "- Alignment calibration\n"
-            "- Excel integration\n\n"
-            "Version 1.0"
+            "- Excel integration\n"
+            "- Batch printing\n"
+            "- GUI preview\n\n"
+            f"✓ You are running the {edition} Edition"
         )
 
 
